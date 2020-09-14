@@ -1,4 +1,5 @@
-# Feed Reader with Image Analysis and Comparison
+# ImageReader
+A simple feed reader with image analysis and comparison. 
 
 https://iamjohnmills.github.io/imagereader/
 
