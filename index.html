@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Images From URL</title>
+
+    <script type="text/javascript" src="ImageReader.js"></script>
+
+    <script type="text/javascript">
+
+      /*
+      (function() {
+          var cors_api_host = 'cors-anywhere.herokuapp.com';
+          var cors_api_url = 'https://' + cors_api_host + '/';
+          var slice = [].slice;
+          var origin = window.location.protocol + '//' + window.location.host;
+          var open = XMLHttpRequest.prototype.open;
+          XMLHttpRequest.prototype.open = function() {
+              var args = slice.call(arguments);
+              var targetOrigin = /^https?:\/\/([^\/]+)/i.exec(args[1]);
+              if (targetOrigin && targetOrigin[0].toLowerCase() !== origin &&
+                  targetOrigin[1] !== cors_api_host) {
+                  args[1] = cors_api_url + args[1];
+              }
+              return open.apply(this, args);
+          };
+      })();
+      */
+
+      var imagereader = new ImageReader();
+
+      var item_container = async function(item){
+        var html = document.createElement('div');
+        html.setAttribute('class', 'item-container');
+        var el_images = await item_images(item.media_objs);
+        html.appendChild(await item_title(item));
+        html.appendChild(el_images);
+        html.appendChild(await item_load_more(item,el_images));
+        return html;
+      }
+
+      var item_title = function(feed_item){
+        var html = document.createElement('h2');
+        html.setAttribute('class', 'item-title');
+        var inner = '<a href="'+feed_item.url+'" target="_blank">' + feed_item.title + '</a>';
+        html.innerHTML = inner;
+        return html;
+      }
+
+      var item_images = async function(media_objs){
+        var html = document.createElement('div');
+        html.setAttribute('class', 'item-images');
+        for(var i in media_objs){
+          var media_obj = await imagereader.downloadMedia(media_objs[i]);
+          if(media_obj){
+            html.classList.add('on');
+            html.appendChild(await el_media(media_obj));
+            break;
+          }
+        }
+        return html;
+      }
+
+      var el_media = async function(media_obj){
+        var html = document.createElement('div');
+        html.setAttribute('class', 'item-image');
+        if(media_obj.type == 'video'){
+          html.appendChild(await el_media_video(media_obj));
+        } else if(media_obj.type == 'image'){
+          html.appendChild(await el_media_image(media_obj));
+        } else if(media_obj.type == 'embed'){
+          html.appendChild(await el_media_embed(media_obj));
+        }
+        html.appendChild(await el_media_caption(media_obj));
+        return html;
+      }
+
+      var el_media_embed = function(media_obj){
+        var embed = document.createElement('iframe');
+        embed.src = media_obj.url;
+        embed.height = media_obj.height;
+        return embed;
+      }
+
+      var el_media_image = function(media_obj){
+        var img = document.createElement('img');
+        img.src = media_obj.dataurl;
+        return img;
+      }
+
+      var el_media_video = function(media_obj){
+        var video = document.createElement('video');
+        var video_source = document.createElement('source');
+        video.preload = 'auto';
+        video.autoplay = 'autoplay';
+        video.loop = 'loop';
+        video.muted = true;
+        video.controls = true;
+        video_source.src = media_obj.url.replace('.gifv','.mp4');
+        video_source.type = media_obj.mime;
+        video.appendChild(video_source)
+        return video;
+      }
+
+      var el_media_caption = function(media_obj){
+        var html = document.createElement('div');
+        html.setAttribute('class', 'item-image-caption');
+        html.innerHTML = media_obj.url;
+        return html;
+      }
+
+      var item_load_more = function(feed_item,append_to){
+        var html = document.createElement('button');
+        inner = 'Load more images';
+        html.addEventListener('click', async function(){
+          if(html.innerHTML != 'Load more images' && html.innerHTML != 'No Media.') return;
+          html.innerHTML = 'Finding and analyzing media urls...';
+          imagereader.getURL(feed_item.url).then(function(response){
+            imagereader.getMediaInString(response,feed_item.media_objs).then(async function(media_objs){
+              var media_objs_unique = [];
+              for(var i in media_objs){
+                var index = parseInt(i)+1
+                html.innerHTML = 'Analyzing media object ' + index + ' of ' + media_objs.length;
+                var media_obj_downloaded = await imagereader.downloadMedia(media_objs[i]);
+                if( await imagereader.isImageUnique(media_obj_downloaded,media_objs_unique) ) {
+                  media_objs_unique.push(media_obj_downloaded);
+                }
+              }
+              if(!media_objs_unique.length) {
+                html.innerHTML = 'No media.';
+                return;
+              }
+              html.innerHTML = 'Found '+ media_objs_unique.length +' media object' + (media_objs_unique.length > 1 ? 's' : '') + '.';
+              append_to.innerHTML = '';
+              media_objs_unique.forEach(async function(media_obj,i,media_objs){
+                append_to.appendChild( await el_media(media_obj) );
+                if(i == media_objs.length - 1){
+                  append_to.classList.add('on');
+                  window.scrollTo({ top: append_to.offsetTop, behavior: 'smooth' });
+                }
+              });
+            }).catch(function(error){
+              html.innerHTML = 'No Media.';
+            });
+          }).catch(function(error){
+            console.log(error);
+            html.innerHTML = 'Error fetching urls.';
+          });
+        });
+        html.innerHTML = inner;
+        return html;
+      }
+
+      var load_feed = async function(url){
+        var content = document.getElementById('content');
+        var feed = document.createElement('div');
+        content.innerHTML = '';
+        content.appendChild(feed);
+        feed.innerHTML = 'Loading...';
+        imagereader.getURL(url).then((response) => {
+          imagereader.parseFeed(response).then(async (items) => {
+            feed.innerHTML = '';
+            for(var i in items){
+              var items_container = await item_container(items[i]);
+              feed.appendChild(items_container);
+            }
+          }).catch(function(e){
+            feed.innerHTML = 'Error parsing feed.';
+          });
+        }).catch(function(e){
+          feed.innerHTML = 'Error downloading feed.';
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', function(event) {
+        var feed_menu = document.getElementById('feed-menu');
+        var feed_source = document.getElementById('feed-source');
+        var feeds = document.getElementsByClassName('feed-menu-item');
+        for (var i = 0; i < feeds.length; i++) {
+          feeds[i].addEventListener('click', function(e){
+            feed_source.value = this.innerHTML;
+            load_feed(this.innerHTML);
+          });
+        }
+
+        document.addEventListener('click',function(e){
+          var on_menu = e.target.closest('#feed-menu') !== null;
+          var on_item = e.target.closest('.feed-menu-item') !== null;
+          if(on_item || !on_menu){
+            feed_menu.classList.remove('on');
+          } else if(on_menu) {
+            feed_menu.classList.add('on');
+          }
+        });
+
+        document.getElementById('feed-form').addEventListener('submit',function(e){
+          e.preventDefault();
+          feed_menu.classList.remove('on');
+          var url = document.getElementById('feed-source').value;
+          load_feed(url);
+        });
+      });
+
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+    * { box-sizing: border-box; font-family: 'Roboto Mono', monospace; font-weight: 300}
+    html,body{ margin: 0; min-height: 100%;}
+    body {  }
+    .container { width: 500px; margin: 0 auto; padding-top: 30px; position: relative; }
+    .feed-source-input { width: 100%; border-radius: 30px; border: 5px solid #7e23e2; padding: 10px 20px; outline: none; font-size: 14px; margin-bottom: 30px;}
+    .item-container { margin-bottom: 60px; }
+    h2 { margin: 0 0 10px 0; }
+    h2 a { color: #000000; text-decoration: none; }
+    h2 a:hover { text-decoration: underline; }
+    .item-images { display: none; padding-top: 10px; margin-bottom: 20px;}
+    .item-images.on { display: block; }
+    .item-image { border: 1px solid #000000; margin-bottom: 10px; }
+    .item-image canvas, .item-image img, .item-image video, .item-image iframe { display: block; width: 100%; border: 0; }
+    .item-image-caption { font-size: 11px; background: #000000; padding: 3px; color: #ffffff;}
+    .item-container button { white-space: nowrap; background: #fff; color: #7e23e2; font-weight: 500; font-size: 18px; padding: 0; outline: none; border: none; cursor: pointer; text-align: left; }
+
+    .feed-menu-items { display: none; margin-bottom: 30px; position: absolute;z-index: 2;top: 100px; width: 100%; background: #fff; border: 1px solid #cccccc; border-radius: 4px; }
+    .feed-menu.on .feed-menu-items { display: block; }
+    .feed-menu-items-title { text-transform: uppercase; font-size: 12px; font-weight: 500; padding: 10px 15px 5px 15px; border-bottom: 1px solid #cccccc;}
+    .feed-menu-items { padding: 10px 0; }
+    .feed-menu-item { padding: 5px 15px; font-size: 12px; cursor: pointer;}
+    </style>
+
+  </head>
+  <body>
+
+    <div class="container">
+
+      <div id="feed-menu" class="feed-menu">
+        <form id="feed-form" class="feed-form">
+          <input id="feed-source" class="feed-source-input" autocomplete="off" value="" placeholder="Enter Feed URL..." />
+        </form>
+        <div class="feed-menu-items">
+          <div class="feed-menu-items-title">Fun</div>
+          <div class="feed-menu-items-list">
+            <div class="feed-menu-item">https://www.reddit.com/r/interestingasfuck/top/.rss</div>
+            <div class="feed-menu-item">https://the-memedaddy.tumblr.com/rss</div>
+            <div class="feed-menu-item">https://catchymemes.com/rss</div>
+            <div class="feed-menu-item">https://n-breezii.tumblr.com/rss</div>
+            <div class="feed-menu-item">https://unfortunately-awake.tumblr.com/rss</div>
+            <div class="feed-menu-item">https://www.reddit.com/r/reactiongifs/top/.rss</div>
+            <div class="feed-menu-item">https://www.reddit.com/r/funny/top/.rss</div>
+            <div class="feed-menu-item">https://www.reddit.com/r/dankmemes/top/.rss</div>
+          </div>
+          <div class="feed-menu-items-title">Gear</div>
+          <div class="feed-menu-items-list">
+            <div class="feed-menu-item">https://feeds.feedburner.com/uncrate</div>
+            <div class="feed-menu-item">https://feeds.feedburner.com/BlessThisStuff</div>
+            <div class="feed-menu-item">http://www.dudeiwantthat.com/rss/</div>
+            <div class="feed-menu-item">https://hiconsumption.com/feed/</div>
+            <div class="feed-menu-item">https://www.gearhungry.com/feed/</div>
+            <div class="feed-menu-item">https://sneakernews.com/feed/</div>
+            <div class="feed-menu-item">https://coolmaterial.com/feed/</div>
+            <div class="feed-menu-item">https://gearmoose.com/feed/</div>
+            <div class="feed-menu-item">https://www.carryology.com/feed/</div>
+            <div class="feed-menu-item">https://www.gearpatrol.com/rss/all.xml/</div>
+            <div class="feed-menu-item">http://www.thecoolector.com/feed/</div>
+          </div>
+          <div class="feed-menu-items-title">More</div>
+          <div class="feed-menu-items-list">
+            <div class="feed-menu-item">https://www.slashgear.com/feed/</div>
+            <div class="feed-menu-item">https://www.buzzfeed.com/index.xml</div>
+            <div class="feed-menu-item">http://feeds2.feedburner.com/Swissmiss</div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <div id="content"></div>
+    </div>
+  </body>
+</html>
