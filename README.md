@@ -1,5 +1,5 @@
 # ImageReader
-A simple feed reader with image analysis and comparison. 
+A simple feed reader with image analysis and comparison.
 
 https://iamjohnmills.github.io/imagereader/
 
@@ -11,6 +11,8 @@ Gets various image and media urls from feed and HTML sources
 Analyzes and filters out irrelevant images
 
 Compares images and filters out duplicates
+
+Note: I'm using this CORS proxy in the front-end part of my app: https://github.com/Rob--W/cors-anywhere/ until I can find a better way to handle this.
 
 ## Highlights
 Extensive ES6 usage, including map, filter, reduce, and promises
