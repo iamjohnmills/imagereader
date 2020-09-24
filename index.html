@@ -32,8 +32,8 @@
       var item_container = async function(item){
         var html = document.createElement('div');
         html.setAttribute('class', 'item-container');
-        var el_images = await item_images(item.media_objs);
         html.appendChild(await item_title(item));
+        var el_images = await item_images(item.media_objs);
         html.appendChild(el_images);
         html.appendChild(await item_load_more(item,el_images));
         return html;
@@ -239,19 +239,19 @@
         <div class="feed-menu-items">
           <div class="feed-menu-items-title">Fun</div>
           <div class="feed-menu-items-list">
-            <div class="feed-menu-item">https://www.reddit.com/r/interestingasfuck/top/.rss</div>
             <div class="feed-menu-item">https://the-memedaddy.tumblr.com/rss</div>
             <div class="feed-menu-item">https://catchymemes.com/rss</div>
             <div class="feed-menu-item">https://n-breezii.tumblr.com/rss</div>
             <div class="feed-menu-item">https://unfortunately-awake.tumblr.com/rss</div>
             <div class="feed-menu-item">https://www.reddit.com/r/reactiongifs/top/.rss</div>
-            <div class="feed-menu-item">https://www.reddit.com/r/funny/top/.rss</div>
             <div class="feed-menu-item">https://www.reddit.com/r/dankmemes/top/.rss</div>
+            <div class="feed-menu-item">https://www.reddit.com/r/interestingasfuck/top/.rss</div>
           </div>
           <div class="feed-menu-items-title">Gear</div>
           <div class="feed-menu-items-list">
-            <div class="feed-menu-item">https://feeds.feedburner.com/uncrate</div>
-            <div class="feed-menu-item">https://feeds.feedburner.com/BlessThisStuff</div>
+            <div class="feed-menu-item">https://www.slashgear.com/feed/</div>
+            <div class="feed-menu-item">https://feeds.feedburner.com/uncrate?format=xml</div>
+            <div class="feed-menu-item">https://feeds.feedburner.com/BlessThisStuff?format=xml</div>
             <div class="feed-menu-item">http://www.dudeiwantthat.com/rss/</div>
             <div class="feed-menu-item">https://hiconsumption.com/feed/</div>
             <div class="feed-menu-item">https://www.gearhungry.com/feed/</div>
@@ -261,12 +261,6 @@
             <div class="feed-menu-item">https://www.carryology.com/feed/</div>
             <div class="feed-menu-item">https://www.gearpatrol.com/rss/all.xml/</div>
             <div class="feed-menu-item">http://www.thecoolector.com/feed/</div>
-          </div>
-          <div class="feed-menu-items-title">More</div>
-          <div class="feed-menu-items-list">
-            <div class="feed-menu-item">https://www.slashgear.com/feed/</div>
-            <div class="feed-menu-item">https://www.buzzfeed.com/index.xml</div>
-            <div class="feed-menu-item">http://feeds2.feedburner.com/Swissmiss</div>
           </div>
         </div>
       </div>

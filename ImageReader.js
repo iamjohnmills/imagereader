@@ -39,7 +39,7 @@
               xhr.overrideMimeType('text/plain; charset=x-user-defined');
             }
             xhr.open('GET', url);
-            xhr.timeout = 10000;
+            xhr.timeout = 5000;
             xhr.send();
           });
         }
@@ -101,17 +101,17 @@
         }
 
         /**
-         *  Determines if a PNG image has transparency
+         *  Determines if a PNG image has a transparent pixel
          *  @param {array} buffer - A Uint8Array of the image buffer data
          *  @returns {boolean} - True if transparent
          */
-        is_transparent(buffer){
-          // source: https://stackoverflow.com/a/41302302
-          var view = new DataView(buffer);
-          if (view.getUint32(0) === 0x89504E47 && view.getUint32(4) === 0x0D0A1A0A) {
-            var type = view.getUint8(8 + 8 + 9);
-            return type === 4 || type === 6;  // grayscale + alpha or RGB + alpha
+         has_alpha(buffer) {
+          for (var i = 3; i < buffer.length; i+=4) {
+            if (buffer[i] < 255) {
+              return true;
+            }
           }
+          return false;
         }
 
         /**
@@ -173,11 +173,11 @@
             if( headers.size > 10000000 ) throw { message: 'File size too large.', headers: headers, media_obj: media_obj };
             var binary = await this.getURL(media_obj.url,'GET',true);
             var uint8 = await new Uint8Array(binary.length).map((value,i) => binary.charCodeAt(i));
-            if( media_obj.mime == 'image/png' && await this.is_transparent(uint8.buffer) ) throw { message: 'PNG Image with transparency not shown.', media_obj: media_obj };
+            if( media_obj.mime == 'image/png' && await this.has_alpha(uint8.buffer) ) throw { message: 'PNG Image with transparency not shown.', media_obj: media_obj };
             var dataurl = URL.createObjectURL(new Blob([uint8],{type:media_obj.mime}));
             var animated = await this.is_animated(media_obj.mime,binary,uint8.buffer);
             var image = await this.get_image(dataurl);
-            var min_width = animated ? 200 : 500;
+            var min_width = animated ? 200 : 400;
             var min_height = 100;
             var min_ratio = 0.58;
             var max_ratio = 3;
@@ -194,7 +194,7 @@
             var canvas_xs = await this.get_canvas(image,25,25,false); // for comparing duplicates
             media_obj.xs_buffer = canvas_xs.getContext('2d').getImageData(0,0,canvas_xs.width,canvas_xs.height).data;
             media_obj.xs_dataurl = canvas_xs.toDataURL();
-            return media_obj
+            return media_obj;
           } catch(e) {
             console.log(e);
             return false;
@@ -340,7 +340,7 @@
             if(!string) throw 'No string to parse'
             var parser = new DOMParser();
             var xml = parser.parseFromString(string, 'text/xml');
-            if(xml.querySelector('rss') == null && xml.querySelector('feed') == null) return false;
+            if(xml.querySelector('rss') == null && xml.querySelector('feed') == null) throw 'Not a valid feed';
             var item_nodes = xml.querySelectorAll('rss > channel > item, feed > entry');
             return await Promise.all( Array.from(item_nodes).map(async (node) => {
               return {
