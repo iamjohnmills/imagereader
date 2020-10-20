@@ -12,7 +12,7 @@ Analyzes and filters out irrelevant images
 
 Compares images and filters out duplicates
 
-Note: You need a plugin to allow CORS in your browser: https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf (I would like to host my own CORS proxy server in the future for this project)
+Uses a proxy server ([cors-anywhere](https://github.com/iamjohnmills/cors-anywhere)) to deal with cors issues and mixed http/s media.
 
 ## Highlights
 All native JS and no dependencies.
