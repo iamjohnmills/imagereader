@@ -283,7 +283,7 @@
           var html = new DOMParser().parseFromString(string, 'text/html');
           var selector = 'source,img,a,iframe'; // meta[property*="image"],[style*="background"]
           var nodes = html.querySelectorAll(selector);
-          return await Array.from( await Promise.all( Array.from(nodes).map(async function(node){
+          var nodes_html = await Array.from( await Promise.all( Array.from(nodes).map(async function(node){
             return await Array.from( await Promise.all( Array.from(node.attributes).map(async function(attribute){
               if(!/^(data-|content|src|href)/.test(attribute.name)) return false;
               if(!/^https?:\/\/[\/|a-zA-z|\d\w|\.|\-]+(\.jpg|\.jpeg|\.gif|\.png|\.apng|\.webp|\.gifv|\.mp4|\.webm)/i.test(attribute.value)) return false;
@@ -297,7 +297,8 @@
             }))).filter(function(attribute,i){
               return !!attribute;
             });
-          }))).flat(2);
+          })));
+          return await nodes_html.flat(2);
         }
 
         /**
