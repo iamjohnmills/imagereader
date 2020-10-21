@@ -257,7 +257,9 @@
             { brand: 'imgur', height: 500, template: 'https://imgur.com/{id}/embed', regexp: /https:\/\/imgur\.com\/(\w+)\/embed/gs },
           ];
           var embeds = await Promise.all( embed_sources.map(async function(source){ // map sources
-            return await Array.from( string.matchAll(source.regexp)).map(function(result){ // map regex matches to my embed structure
+            var embed_matches = string.match(source.regexp);
+            if( embed_matches == null ) return [];
+            return await embed_matches.map(function(result){ // map regex matches to my embed structure
               return { url: source.template.replace(/{id}/, result[1]), type: 'embed', brand: source.brand, height: source.height }
             });
           }) );
