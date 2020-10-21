@@ -283,7 +283,7 @@
           var html = new DOMParser().parseFromString(string, 'text/html');
           var selector = 'source,img,a,iframe'; // meta[property*="image"],[style*="background"]
           var nodes = html.querySelectorAll(selector);
-          var nodes_html = await Array.from( await Promise.all( Array.from(nodes).map(async function(node){
+          return await Array.from( await Promise.all( Array.from(nodes).map(async function(node){
             return await Array.from( await Promise.all( Array.from(node.attributes).map(async function(attribute){
               if(!/^(data-|content|src|href)/.test(attribute.name)) return false;
               if(!/^https?:\/\/[\/|a-zA-z|\d\w|\.|\-]+(\.jpg|\.jpeg|\.gif|\.png|\.apng|\.webp|\.gifv|\.mp4|\.webm)/i.test(attribute.value)) return false;
@@ -297,8 +297,7 @@
             }))).filter(function(attribute,i){
               return !!attribute;
             });
-          })));
-          return await nodes_html.flat(2);
+          }))).flat(2);
         }
 
         /**
@@ -356,3 +355,11 @@
           }
         }
       }
+
+      Object.defineProperty(Array.prototype, 'flat', {
+          value: function(depth = 1) {
+            return this.reduce(function (flat, toFlatten) {
+              return flat.concat((Array.isArray(toFlatten) && (depth>1)) ? toFlatten.flat(depth-1) : toFlatten);
+            }, []);
+          }
+      });
