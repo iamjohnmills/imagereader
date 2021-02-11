@@ -9,6 +9,7 @@
 
     <script type="text/javascript">
 
+    /*
       (function() {
           //var cors_api_host = 'localhost:8080';
           //var cors_api_url = 'http://' + cors_api_host + '/';
@@ -27,6 +28,7 @@
               return open.apply(this, args);
           };
       })();
+      */
 
       var imagereader = new ImageReader();
 
@@ -67,6 +69,8 @@
         html.setAttribute('class', 'item-image');
         if(media_obj.type == 'video'){
           html.appendChild(await el_media_video(media_obj));
+        } else if(media_obj.ext == 'svg'){
+          html.appendChild(await el_media_image_remote(media_obj));
         } else if(media_obj.type == 'image'){
           html.appendChild(await el_media_image(media_obj));
         } else if(media_obj.type == 'embed'){
@@ -81,6 +85,12 @@
         embed.src = media_obj.url;
         embed.height = media_obj.height;
         return embed;
+      }
+
+      var el_media_image_remote = function(media_obj){
+        var img = document.createElement('img');
+        img.src = media_obj.url;
+        return img;
       }
 
       var el_media_image = function(media_obj){
@@ -123,7 +133,6 @@
                 var index = parseInt(i)+1
                 html.innerHTML = 'Analyzing media object ' + index + ' of ' + media_objs.length;
                 var media_obj_downloaded = await imagereader.downloadMedia(media_objs[i]);
-                console.log('downloaded')
                 if( await imagereader.isImageUnique(media_obj_downloaded,media_objs_unique) ) {
                   media_objs_unique.push(media_obj_downloaded);
                 }
@@ -223,7 +232,7 @@
     h2 a:hover { text-decoration: underline; }
     .item-images { display: none; padding-top: 10px; margin-bottom: 20px; }
     .item-images.on { display: block; }
-    .item-image { border: 1px solid #000000; margin-bottom: 10px; }
+    .item-image { border: 1px solid #000000; background: #000;  margin-bottom: 10px; }
     .item-image canvas, .item-image img, .item-image video, .item-image iframe { display: block; width: 100%; border: 0; }
     .item-image-caption { font-size: 11px; background: #000000; padding: 3px; color: #ffffff;}
     .item-container button { white-space: nowrap; background: #fff; color: #7e23e2; font-weight: 500; font-size: 18px; padding: 0; outline: none; border: none; cursor: pointer; text-align: left; }

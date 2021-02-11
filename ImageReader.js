@@ -161,7 +161,7 @@
         async downloadMedia(media_obj){
           try {
             if(typeof media_obj == 'undefined') throw { message: 'No media object provided.' };
-            if( media_obj.type !== 'image' ) return media_obj;
+            if( media_obj.type !== 'image' || media_obj.ext == 'svg' ) return media_obj;
             var headers = await this.getURL(media_obj.url,'HEAD');
             if( headers.type == 'video/mp4' && media_obj.mime !== 'video/mp4'){ // because sometimes gifs wanna be mp4s
               media_obj.type = 'video';
@@ -299,7 +299,7 @@
               });
               if(attribute.name != 'href' && i < 0){ // get image src values that don't have extensions and set mime to jpeg
                 return { url: attribute.value, mime: 'image/jpg', type: 'image', ext: 'jpg' };
-              } else if(i <= 0){ // svg or no match
+              } else if(i < 0){ // no match
                 return false;
               }
               return { url: attribute.value, mime: media_types[i].mime, type: media_types[i].type, ext: media_types[i].ext };
