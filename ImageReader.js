@@ -348,7 +348,7 @@
               return {
                 title: node.querySelector('title') ? node.querySelector('title').textContent : 'No Title',
                 url: node.querySelector('link').textContent ? node.querySelector('link').textContent : node.querySelector('link').getAttribute('href'),
-                media_objs: await this.getMediaInString(node.textContent),
+                media_objs: await this.getMediaInString(node.textContent.replaceAll(/<!\[CDATA\[|]]>/gm,'') ),
               }
             }));
           } catch(e) {
