@@ -273,6 +273,7 @@
          */
         async get_media_objs(string){
           var media_types = [
+            { mime: 'image/svg', type: 'image', ext: 'svg', regexp: /https?:[\/|%|\w|\.|\-]+(\.svg)/i },
             { mime: 'image/jpg', type: 'image', ext: 'jpg', regexp: /https?:[\/|%|\w|\.|\-]+(\.jpg|\.jpeg)/i },
             { mime: 'video/mp4', type: 'video', ext: 'mp4', regexp: /https?:[\/|%|\w|\.|\-]+\.mp4/i },
             { mime: 'video/mp4', type: 'video', ext: 'gifv', regexp: /https?:[\/|%|\w|\.|\-]+\.gifv/i },
@@ -289,6 +290,7 @@
             return await Array.from( await Promise.all( Array.from(node.attributes).map(async function(attribute){
               if(!/^(data-|content|src|href|url)/.test(attribute.name)) return false;
               if(!/^https?/i.test(attribute.value)) return false;
+              // how do I check for urls with no extension
               if(/\s/.test(attribute.value)){ // srcset first value only
                 attribute.value = await attribute.value.split(' ')[0];
               }
@@ -297,7 +299,7 @@
               });
               if(attribute.name != 'href' && i < 0){ // get image src values that don't have extensions and set mime to jpeg
                 return { url: attribute.value, mime: 'image/jpg', type: 'image', ext: 'jpg' };
-              } else if(i < 0){
+              } else if(i <= 0){ // svg or no match
                 return false;
               }
               return { url: attribute.value, mime: media_types[i].mime, type: media_types[i].type, ext: media_types[i].ext };
