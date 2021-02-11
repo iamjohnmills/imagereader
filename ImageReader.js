@@ -273,14 +273,14 @@
          */
         async get_media_objs(string){
           var media_types = [
-            { mime: 'image/jpg', type: 'image', ext: 'jpg', regexp: /https?:[\/|a-zA-z|\d\w|\.|\-]+(\.jpg|\.jpeg)/i },
-            { mime: 'video/mp4', type: 'video', ext: 'mp4', regexp: /https?:[\/|a-zA-z|\d\w|\.|\-]+\.mp4/i },
-            { mime: 'video/mp4', type: 'video', ext: 'gifv', regexp: /https?:[\/|a-zA-z|\d\w|\.|\-]+\.gifv/i },
-            { mime: 'image/gif', type: 'image', ext: 'gif', regexp: /https?:[\/|a-zA-z|\d\w|\.|\-]+\.gif(?!\w)/i },
-            { mime: 'image/webp', type: 'image', ext: 'webp', regexp: /https?:[\/|a-zA-z|\d\w|\.|\-]+\.webp/i },
-            { mime: 'video/webm', type: 'video', ext: 'webm', regexp: /https?:[\/|a-zA-z|\d\w|\.|\-]+\.webm/i },
-            { mime: 'image/png', type: 'image', ext: 'png', regexp: /https?:[\/|a-zA-z|\d\w|\.|\-]+\.png/i },
-            { mime: 'image/apng', type: 'animated', ext: 'apng', regexp: /https?:[\/|a-zA-z|\d\w|\.|\-]+\.apng/i },
+            { mime: 'image/jpg', type: 'image', ext: 'jpg', regexp: /https?:[\/|%|\w|\.|\-]+(\.jpg|\.jpeg)/i },
+            { mime: 'video/mp4', type: 'video', ext: 'mp4', regexp: /https?:[\/|%|\w|\.|\-]+\.mp4/i },
+            { mime: 'video/mp4', type: 'video', ext: 'gifv', regexp: /https?:[\/|%|\w|\.|\-]+\.gifv/i },
+            { mime: 'image/gif', type: 'image', ext: 'gif', regexp: /https?:[\/|%|\w|\.|\-]+\.gif(?!\w)/i },
+            { mime: 'image/webp', type: 'image', ext: 'webp', regexp: /https?:[\/|%|\w|\.|\-]+\.webp/i },
+            { mime: 'video/webm', type: 'video', ext: 'webm', regexp: /https?:[\/|%|\w|\.|\-]+\.webm/i },
+            { mime: 'image/png', type: 'image', ext: 'png', regexp: /https?:[\/|%|\w|\.|\-]+\.png/i },
+            { mime: 'image/apng', type: 'animated', ext: 'apng', regexp: /https?:[\/|%|\w|\.|\-]+\.apng/i },
           ];
           var html = new DOMParser().parseFromString(string, 'text/html');
           var selector = 'source,img,a,iframe'; // meta[property*="image"],[style*="background"]
@@ -288,13 +288,18 @@
           return await Array.from( await Promise.all( Array.from(nodes).map(async function(node){
             return await Array.from( await Promise.all( Array.from(node.attributes).map(async function(attribute){
               if(!/^(data-|content|src|href)/.test(attribute.name)) return false;
-              if(!/^https?:\/\/[\/|a-zA-z|\d\w|\.|\-]+(\.jpg|\.jpeg|\.gif|\.png|\.apng|\.webp|\.gifv|\.mp4|\.webm)/i.test(attribute.value)) return false;
+              //if(!/^https?:\/\/[\/|\%|\w|\.|\-]+(\.jpg|\.jpeg|\.gif|\.png|\.apng|\.webp|\.gifv|\.mp4|\.webm)/i.test(attribute.value)) return false;
               if(/\s/.test(attribute.value)){ // srcset first value only
                 attribute.value = await attribute.value.split(' ')[0];
               }
               var i = await media_types.findIndex(function(media_type){
                 return media_type.regexp.test(attribute.value);
               });
+              if(attribute.name == 'src' && i < 0){ // get image src values that don't have extensions and set to jpeg
+                return { url: attribute.value, mime: 'image/jpg', type: 'image', ext: 'jpg' };
+              } else if(i < 0){
+                return false;
+              }
               return { url: attribute.value, mime: media_types[i].mime, type: media_types[i].type, ext: media_types[i].ext };
             }))).filter(function(attribute,i){
               return !!attribute;
@@ -348,7 +353,7 @@
               return {
                 title: node.querySelector('title') ? node.querySelector('title').textContent : 'No Title',
                 url: node.querySelector('link').textContent ? node.querySelector('link').textContent : node.querySelector('link').getAttribute('href'),
-                media_objs: await this.getMediaInString(node.textContent.replaceAll(/<!\[CDATA\[|]]>/gm,'') ),
+                media_objs: await this.getMediaInString(node.textContent ),
               }
             }));
           } catch(e) {
