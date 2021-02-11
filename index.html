@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=0.8">
     <title>ImageReader</title>
 
     <script type="text/javascript" src="ImageReader.js"></script>
@@ -221,11 +221,11 @@
     .item-image-caption { font-size: 11px; background: #000000; padding: 3px; color: #ffffff;}
     .item-container button { white-space: nowrap; background: #fff; color: #7e23e2; font-weight: 500; font-size: 18px; padding: 0; outline: none; border: none; cursor: pointer; text-align: left; }
 
-    .feed-menu-items { display: none; margin-bottom: 30px; position: absolute;z-index: 2;top: 100px; width: 100%; background: #fff; border: 1px solid #cccccc; border-radius: 4px; }
+  .feed-menu-items { display: none; margin-bottom: 30px; }
     .feed-menu.on .feed-menu-items { display: block; }
-    .feed-menu-items-title { text-transform: uppercase; font-size: 12px; font-weight: 500; padding: 10px 15px 5px 15px; border-bottom: 1px solid #cccccc;}
+    .feed-menu-items-title { text-transform: uppercase; font-size: 12px; font-weight: 500; padding: 10px 0 5px 0; }
     .feed-menu-items { padding: 10px 0; }
-    .feed-menu-item { padding: 5px 15px; font-size: 12px; cursor: pointer;}
+    .feed-menu-item { padding: 5px 0; white-space: nowrap; text-overflow: ellipses; overflow: hidden; font-size: 12px; cursor: pointer;}
     </style>
 
   </head>
@@ -238,18 +238,18 @@
           <input id="feed-source" class="feed-source-input" autocomplete="off" value="" placeholder="Enter Feed URL..." />
         </form>
         <div class="feed-menu-items">
-          <div class="feed-menu-items-title">Fun</div>
+          <div class="feed-menu-items-title">News</div>
           <div class="feed-menu-items-list">
-            <div class="feed-menu-item">https://the-memedaddy.tumblr.com/rss</div>
+            <div class="feed-menu-item">https://www.slashgear.com/feed/</div>
+          </div>
+          <div class="feed-menu-items-list">
             <div class="feed-menu-item">https://catchymemes.com/rss</div>
             <div class="feed-menu-item">https://n-breezii.tumblr.com/rss</div>
             <div class="feed-menu-item">https://unfortunately-awake.tumblr.com/rss</div>
-            <div class="feed-menu-item">https://www.reddit.com/r/reactiongifs/top/.rss</div>
             <div class="feed-menu-item">https://www.reddit.com/r/interestingasfuck/top/.rss</div>
           </div>
           <div class="feed-menu-items-title">Gear</div>
           <div class="feed-menu-items-list">
-            <div class="feed-menu-item">https://www.slashgear.com/feed/</div>
             <div class="feed-menu-item">https://feeds.feedburner.com/uncrate?format=xml</div>
             <div class="feed-menu-item">https://feeds.feedburner.com/BlessThisStuff?format=xml</div>
             <div class="feed-menu-item">http://www.dudeiwantthat.com/rss/</div>
@@ -259,7 +259,6 @@
             <div class="feed-menu-item">https://coolmaterial.com/feed/</div>
             <div class="feed-menu-item">https://gearmoose.com/feed/</div>
             <div class="feed-menu-item">https://www.carryology.com/feed/</div>
-            <div class="feed-menu-item">https://www.gearpatrol.com/rss/all.xml/</div>
             <div class="feed-menu-item">http://www.thecoolector.com/feed/</div>
           </div>
         </div>
