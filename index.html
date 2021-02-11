@@ -157,7 +157,10 @@
         var feed = document.createElement('div');
         content.innerHTML = '';
         content.appendChild(feed);
-        feed.innerHTML = 'Loading...';
+        var loading = document.createElement('div');
+        loading.classList.add('loading');
+        loading.innerHTML = 'Loading...';
+        feed.appendChild(loading);
         imagereader.getURL(url).then((response) => {
           imagereader.parseFeed(response).then(async (items) => {
             feed.innerHTML = '';
@@ -166,10 +169,10 @@
               feed.appendChild(items_container);
             }
           }).catch(function(e){
-            feed.innerHTML = 'Error parsing feed.';
+            loading.innerHTML = 'Error parsing feed.';
           });
         }).catch(function(e){
-          feed.innerHTML = 'Error downloading feed.';
+          loading.innerHTML = 'Error downloading feed.';
         });
       }
 
