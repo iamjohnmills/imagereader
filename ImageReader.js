@@ -39,7 +39,7 @@
               xhr.overrideMimeType('text/plain; charset=x-user-defined');
             }
             xhr.open('GET', url);
-            xhr.timeout = 30000;
+            xhr.timeout = 10000;
             xhr.send();
           });
         }
