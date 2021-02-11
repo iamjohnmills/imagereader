@@ -289,6 +289,7 @@
           return await Array.from( await Promise.all( Array.from(nodes).map(async function(node){
             return await Array.from( await Promise.all( Array.from(node.attributes).map(async function(attribute){
               if(!/^(data-|content|src|href|url)/.test(attribute.name)) return false;
+              if(!/^https/i.test(attribute.value)) return false;
               //if(!/^https?:\/\/[\/|\%|\w|\.|\-]+(\.jpg|\.jpeg|\.gif|\.png|\.apng|\.webp|\.gifv|\.mp4|\.webm)/i.test(attribute.value)) return false;
               //console.log(node,attribute.name)
               if(/\s/.test(attribute.value)){ // srcset first value only
