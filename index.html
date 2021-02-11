@@ -9,7 +9,6 @@
 
     <script type="text/javascript">
 
-    /*
       (function() {
           //var cors_api_host = 'localhost:8080';
           //var cors_api_url = 'http://' + cors_api_host + '/';
@@ -28,7 +27,6 @@
               return open.apply(this, args);
           };
       })();
-      */
 
       var imagereader = new ImageReader();
 
@@ -124,14 +122,11 @@
               for(var i in media_objs){
                 var index = parseInt(i)+1
                 html.innerHTML = 'Analyzing media object ' + index + ' of ' + media_objs.length;
-                console.log(index,media_objs[i])
                 var media_obj_downloaded = await imagereader.downloadMedia(media_objs[i]);
-                //console.log('downloaded')
+                console.log('downloaded')
                 if( await imagereader.isImageUnique(media_obj_downloaded,media_objs_unique) ) {
                   media_objs_unique.push(media_obj_downloaded);
                 }
-                //console.log('checked unique',media_obj_downloaded)
-
               }
               if(!media_objs_unique.length) {
                 html.innerHTML = 'No media.';
