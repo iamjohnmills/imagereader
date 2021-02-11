@@ -230,7 +230,7 @@
               if(typeof array[i].xs_buffer == 'undefined') continue;
               if(array[i].xs_dataurl == image.xs_dataurl) throw 'Image is duplicate. url: ' + image.url + ' match: ' + array[i].url;
               var threshold = await this.root_mean_square(image.xs_buffer,array[i].xs_buffer);
-              if(threshold < 33) throw 'Image is duplicate with threshold of '+threshold+'. url: ' + image.url + ' match: ' + array[i].url;
+              if(threshold < 25) throw 'Image is duplicate with threshold of '+threshold+'. url: ' + image.url + ' match: ' + array[i].url;
             }
             return true;
           } catch(e) {
