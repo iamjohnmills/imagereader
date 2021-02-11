@@ -177,7 +177,7 @@
             var dataurl = URL.createObjectURL(new Blob([uint8],{type:media_obj.mime}));
             var animated = await this.is_animated(media_obj.mime,binary,uint8.buffer);
             var image = await this.get_image(dataurl);
-            var min_width = animated ? 200 : 400;
+            var min_width = animated ? 200 : 350;
             var min_height = 100;
             var min_ratio = 0.58;
             var max_ratio = 3;
