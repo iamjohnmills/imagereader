@@ -283,19 +283,21 @@
             { mime: 'image/apng', type: 'animated', ext: 'apng', regexp: /https?:[\/|%|\w|\.|\-]+\.apng/i },
           ];
           var html = new DOMParser().parseFromString(string, 'text/html');
-          var selector = 'source,img,a,iframe'; // meta[property*="image"],[style*="background"]
+          //console.log(string)
+          var selector = 'source,img,a,iframe,media\\:content,media\\:thumbnail'; // meta[property*="image"],[style*="background"]
           var nodes = html.querySelectorAll(selector);
           return await Array.from( await Promise.all( Array.from(nodes).map(async function(node){
             return await Array.from( await Promise.all( Array.from(node.attributes).map(async function(attribute){
-              if(!/^(data-|content|src|href)/.test(attribute.name)) return false;
+              if(!/^(data-|content|src|href|url)/.test(attribute.name)) return false;
               //if(!/^https?:\/\/[\/|\%|\w|\.|\-]+(\.jpg|\.jpeg|\.gif|\.png|\.apng|\.webp|\.gifv|\.mp4|\.webm)/i.test(attribute.value)) return false;
+              //console.log(node,attribute.name)
               if(/\s/.test(attribute.value)){ // srcset first value only
                 attribute.value = await attribute.value.split(' ')[0];
               }
               var i = await media_types.findIndex(function(media_type){
                 return media_type.regexp.test(attribute.value);
               });
-              if(attribute.name == 'src' && i < 0){ // get image src values that don't have extensions and set to jpeg
+              if(attribute.name != 'href' && i < 0){ // get image src values that don't have extensions and set to jpeg
                 return { url: attribute.value, mime: 'image/jpg', type: 'image', ext: 'jpg' };
               } else if(i < 0){
                 return false;
@@ -350,10 +352,12 @@
             if(xml.querySelector('rss') == null && xml.querySelector('feed') == null) throw 'Not a valid feed';
             var item_nodes = xml.querySelectorAll('rss > channel > item, feed > entry');
             return await Promise.all( Array.from(item_nodes).map(async (node) => {
+              //console.log(node.innerHTML)
+              let media_content_objs = await this.getMediaInString(node.textContent);
               return {
                 title: node.querySelector('title') ? node.querySelector('title').textContent : 'No Title',
                 url: node.querySelector('link').textContent ? node.querySelector('link').textContent : node.querySelector('link').getAttribute('href'),
-                media_objs: await this.getMediaInString(node.textContent ),
+                media_objs: await this.getMediaInString(node.innerHTML.replaceAll(/<!\[CDATA\[|\]\]>/g,''), media_content_objs),
               }
             }));
           } catch(e) {
