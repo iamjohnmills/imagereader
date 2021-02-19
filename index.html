@@ -190,8 +190,8 @@
         var feeds = document.getElementsByClassName('feed-menu-item');
         for (var i = 0; i < feeds.length; i++) {
           feeds[i].addEventListener('click', function(e){
-            feed_source.value = this.innerHTML;
-            load_feed(this.innerHTML);
+            feed_source.value = this.dataset.url;
+            load_feed(this.dataset.url);
           });
         }
 
@@ -253,34 +253,33 @@
         <div class="feed-menu-items">
           <div class="feed-menu-items-title">News</div>
           <div class="feed-menu-items-list">
-            <div class="feed-menu-item">https://www.slashgear.com/feed/</div>
-            <div class="feed-menu-item">https://www.polygon.com/rss/index.xml</div>
-            <div class="feed-menu-item">https://www.pushsquare.com/feeds/latest</div>
+            <div class="feed-menu-item" data-url="https://www.slashgear.com/feed/">slashgear.com/feed/</div>
+            <div class="feed-menu-item" data-url="https://www.polygon.com/rss/index.xml">polygon.com/rss/index.xml</div>
+            <div class="feed-menu-item" data-url="https://www.pushsquare.com/feeds/latest">pushsquare.com/feeds/latest</div>
           </div>
           <div class="feed-menu-items-list">
           <div class="feed-menu-items-title">Fun</div>
-            <div class="feed-menu-item">https://www.reddit.com/r/ProgrammerHumor/top/.rss</div>
-            <div class="feed-menu-item">https://xkcd.com/rss.xml</div>
-            <div class="feed-menu-item">https://www.reddit.com/r/interestingasfuck/top/.rss</div>
-            <div class="feed-menu-item">https://www.reddit.com/r/interestingasfuck/new/.rss</div>
-            <div class="feed-menu-item">https://catchymemes.com/rss</div>
-            <div class="feed-menu-item">https://n-breezii.tumblr.com/rss</div>
-            <div class="feed-menu-item">https://unfortunately-awake.tumblr.com/rss</div>
-            <div class="feed-menu-item">https://memebase.cheezburger.com/rss</div>
+            <div class="feed-menu-item" data-url="https://www.reddit.com/r/interestingasfuck/top.rss">reddit.com/r/interestingasfuck/top.rss</div>
+            <div class="feed-menu-item" data-url="https://www.reddit.com/r/interestingasfuck/new.rss">reddit.com/r/interestingasfuck/new.rss</div>
+            <div class="feed-menu-item" data-url="https://catchymemes.com/rss">catchymemes.com/rss</div>
+            <div class="feed-menu-item" data-url="https://n-breezii.tumblr.com/rss">n-breezii.tumblr.com/rss</div>
+            <div class="feed-menu-item" data-url="https://unfortunately-awake.tumblr.com/rss">unfortunately-awake.tumblr.com/rss</div>
+            <div class="feed-menu-item" data-url="https://www.reddit.com/r/ProgrammerHumor/top.rss">reddit.com/r/ProgrammerHumor/top.rss</div>
+            <div class="feed-menu-item" data-url="https://memebase.cheezburger.com/rss">memebase.cheezburger.com/rss</div>
           </div>
           <div class="feed-menu-items-title">Gear</div>
           <div class="feed-menu-items-list">
-            <div class="feed-menu-item">https://feeds.feedburner.com/uncrate?format=xml</div>
-            <div class="feed-menu-item">https://feeds.feedburner.com/BlessThisStuff?format=xml</div>
-            <div class="feed-menu-item">http://www.dudeiwantthat.com/rss/</div>
-            <div class="feed-menu-item">https://hiconsumption.com/feed/</div>
-            <div class="feed-menu-item">https://www.gearhungry.com/feed/</div>
-            <div class="feed-menu-item">https://sneakernews.com/feed/</div>
-            <div class="feed-menu-item">https://www.gearpatrol.com/rss/all.xml/</div>
-            <div class="feed-menu-item">https://coolmaterial.com/feed/</div>
-            <div class="feed-menu-item">https://gearmoose.com/feed/</div>
-            <div class="feed-menu-item">https://www.carryology.com/feed/</div>
-            <div class="feed-menu-item">http://www.thecoolector.com/feed/</div>
+            <div class="feed-menu-item" data-url="https://feeds.feedburner.com/uncrate?format=xml">feeds.feedburner.com/uncrate</div>
+            <div class="feed-menu-item" data-url="https://feeds.feedburner.com/BlessThisStuff?format=xml">feeds.feedburner.com/BlessThisStuff</div>
+            <div class="feed-menu-item" data-url="http://www.dudeiwantthat.com/rss/">dudeiwantthat.com/rss</div>
+            <div class="feed-menu-item" data-url="https://hiconsumption.com/feed/">hiconsumption.com/feed</div>
+            <div class="feed-menu-item" data-url="https://www.gearhungry.com/feed/">gearhungry.com/feed</div>
+            <div class="feed-menu-item" data-url="https://sneakernews.com/feed/">sneakernews.com/feed</div>
+            <div class="feed-menu-item" data-url="https://www.gearpatrol.com/rss/all.xml/">gearpatrol.com/rss/all.xml</div>
+            <div class="feed-menu-item" data-url="https://coolmaterial.com/feed/">coolmaterial.com/feed</div>
+            <div class="feed-menu-item" data-url="https://gearmoose.com/feed/">gearmoose.com/feed</div>
+            <div class="feed-menu-item" data-url="https://www.carryology.com/feed/">carryology.com/feed</div>
+            <div class="feed-menu-item" data-url="http://www.thecoolector.com/feed/">thecoolector.com/feed</div>
           </div>
         </div>
       </div>
