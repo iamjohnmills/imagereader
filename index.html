@@ -218,6 +218,8 @@
     <style>
     * { box-sizing: border-box; font-family: 'Roboto Mono', monospace; }
     html, body{ margin: 0; min-height: 100%; overflow-x: hidden; }
+    .navicon { width: 72px; position: absolute; top: 0; right: 10px; padding: 18px; cursor: pointer; }
+    .feed-form { position: relative; }
     .container { width: 530px; max-width: 100%; margin: 0 auto; padding: 30px 15px; position: relative; }
     .feed-source-input { width: 100%; border-radius: 40px; border: 10px solid #7e23e2; padding: 15px 25px; outline: none; font-size: 16px; margin-bottom: 30px; }
     @media only screen and (min-width: 600px) {
@@ -254,7 +256,15 @@
       <div id="feed-menu" class="feed-menu">
         <form id="feed-form" class="feed-form">
           <input id="feed-source" class="feed-source-input" autocomplete="off" value="" placeholder="Enter Feed URL..." />
+          <svg id="navicon" class="navicon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
+            <path class="top-line" d="M10 12h30v4H10z"/>
+            <path class="middle-line" d="M10 22h30v4H10z"/>
+            <path class="bottom-line" d="M10 32h30v4H10z"/>
+          </svg>
+
         </form>
+
+
         <div class="feed-menu-items">
           <div class="feed-menu-items-title">News</div>
           <div class="feed-menu-items-list">
